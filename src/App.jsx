@@ -121,7 +121,6 @@ function AppLayout() {
 
             {/* Global UI */}
             <BackToTop />
-            <ToastContainer />
 
             {shortcutsOpen && <KeyboardShortcutsModal onClose={() => setShortcutsOpen(false)} />}
         </div>
@@ -146,6 +145,7 @@ function App() {
                                         </ProtectedRoute>
                                     } />
                                 </Routes>
+                                <ToastContainer />
                             </AppDataProvider>
                         </ConfirmProvider>
                     </ToastProvider>

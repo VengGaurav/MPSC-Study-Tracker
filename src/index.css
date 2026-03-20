@@ -5,6 +5,7 @@
 
 /* ---- CSS Variables (Dark Mode Default) ---- */
 :root {
+  color-scheme: dark;
   --bg: #0d1117;
   --surface: #161b22;
   --surface2: #21262d;
@@ -43,6 +44,7 @@
 
 /* ---- Light Mode Override ---- */
 html.light-mode {
+  color-scheme: light;
   --bg: #f2f4f7;
   --surface: #ffffff;
   --surface2: #f0f2f5;
@@ -155,6 +157,21 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Date input styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+:root:not(.light-mode) input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 /* ---- Custom Select Dropdown (Premium) ---- */
@@ -305,6 +322,53 @@ input[type="number"] {
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.01em;
+}
+
+.topbar-datetime {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+  padding: 6px 14px;
+  border-radius: var(--radius-xl);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  user-select: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .topbar-datetime {
+    display: flex;
+  }
+}
+
+.topbar-datetime:hover {
+  background: var(--surface);
+  border-color: var(--text3);
+  color: var(--text);
+}
+
+.datetime-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.datetime-icon {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.datetime-divider {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--border);
 }
 
 .topbar-right {

@@ -2,24 +2,61 @@ import { useState } from 'react';
 import { useAppData } from '../context/AppDataContext';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../utils/supabaseClient';
 import EmptyState from '../components/common/EmptyState';
 
 export default function ResourcesPage() {
+    const { user } = useAuth();
     const { resources, addResource, deleteResource } = useAppData();
     const { toast } = useToast();
     const { showConfirm } = useConfirm();
     const [modalOpen, setModalOpen] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [fileOptions, setFileOptions] = useState({ mode: 'url', file: null });
     const [form, setForm] = useState({ name: '', url: '', type: 'link', notes: '' });
 
-    const handleAdd = () => {
+    const handleAdd = async () => {
         if (!form.name.trim()) {
             toast.error('⚠️ Resource name is required');
             return;
         }
-        addResource(form);
+
+        let finalUrl = form.url;
+
+        // Handle File Upload if mode is File
+        if (fileOptions.mode === 'file' && fileOptions.file) {
+            if (!user) {
+                toast.error('You must be logged in to upload files');
+                return;
+            }
+            setUploading(true);
+            const file = fileOptions.file;
+            const ext = file.name.split('.').pop();
+            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+            const filePath = `user_${user.id}/${fileName}`;
+            
+            const { data, error } = await supabase.storage.from('resources').upload(filePath, file);
+            
+            if (error) {
+                toast.error('Upload failed: ' + error.message);
+                setUploading(false);
+                return;
+            }
+
+            const { data: publicUrlData } = supabase.storage.from('resources').getPublicUrl(filePath);
+            finalUrl = publicUrlData.publicUrl;
+        } else if (fileOptions.mode === 'file' && !fileOptions.file) {
+            toast.error('⚠️ Please select a file to upload');
+            return;
+        }
+
+        addResource({ ...form, url: finalUrl });
         toast.success('✅ Resource added!');
         setModalOpen(false);
+        setUploading(false);
         setForm({ name: '', url: '', type: 'link', notes: '' });
+        setFileOptions({ mode: 'url', file: null });
     };
 
     const handleDelete = async (id, name) => {
@@ -125,8 +162,39 @@ export default function ResourcesPage() {
                                 </div>
                             </div>
                             <div className="form-group">
-                                <label>URL (optional)</label>
-                                <input placeholder="https://..." value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} />
+                                <label>Resource Link or File</label>
+                                <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                                    <button 
+                                        className={`btn btn-sm ${fileOptions.mode === 'url' ? 'btn-primary' : 'btn-ghost'}`}
+                                        onClick={() => setFileOptions({ ...fileOptions, mode: 'url' })}
+                                        disabled={uploading}
+                                    >
+                                        🔗 Web URL
+                                    </button>
+                                    <button 
+                                        className={`btn btn-sm ${fileOptions.mode === 'file' ? 'btn-primary' : 'btn-ghost'}`}
+                                        onClick={() => setFileOptions({ ...fileOptions, mode: 'file' })}
+                                        disabled={uploading}
+                                    >
+                                        📄 Upload File
+                                    </button>
+                                </div>
+                                
+                                {fileOptions.mode === 'url' ? (
+                                    <input 
+                                        placeholder="https://..." 
+                                        value={form.url} 
+                                        onChange={e => setForm({ ...form, url: e.target.value })} 
+                                        disabled={uploading}
+                                    />
+                                ) : (
+                                    <input 
+                                        type="file" 
+                                        onChange={e => setFileOptions({ ...fileOptions, file: e.target.files[0] })} 
+                                        disabled={uploading}
+                                        style={{ padding: '8px', border: '1px dashed var(--border)', background: 'var(--surface2)' }}
+                                    />
+                                )}
                             </div>
                             <div className="form-group">
                                 <label>Notes (optional)</label>
@@ -134,8 +202,10 @@ export default function ResourcesPage() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-ghost" onClick={() => setModalOpen(false)}>Cancel</button>
-                            <button className="btn btn-primary" onClick={handleAdd}>Add Resource</button>
+                            <button className="btn btn-ghost" onClick={() => setModalOpen(false)} disabled={uploading}>Cancel</button>
+                            <button className="btn btn-primary" onClick={handleAdd} disabled={uploading}>
+                                {uploading ? 'Uploading...' : 'Add Resource'}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -30,6 +30,15 @@ export default function Topbar() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const formattedDate = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const formattedTime = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
     const pageName = PAGE_NAMES[location.pathname] || '';
 
@@ -76,6 +85,15 @@ export default function Topbar() {
                     <span className="topbar-page-name page-name">
                         {pageName}
                     </span>
+                    <div className="topbar-datetime">
+                        <span className="datetime-item">
+                            <span className="datetime-icon">📅</span> {formattedDate}
+                        </span>
+                        <div className="datetime-divider" />
+                        <span className="datetime-item">
+                            <span className="datetime-icon">⏰</span> {formattedTime}
+                        </span>
+                    </div>
                 </div>
 
                 {/* Right — Search, Theme Toggle, User */}

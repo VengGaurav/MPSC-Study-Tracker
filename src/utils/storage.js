@@ -24,6 +24,7 @@ const KEYS = {
   get HABITS()    { return userKey('habits'); },
   get NOTES()     { return userKey('notes'); },
   get RESOURCES() { return userKey('resources'); },
+  get EXAM_DATE() { return userKey('exam_date'); },
   THEME: 'mpsc_theme',              // shared across users
   SIDEBAR: 'mpsc_sidebar_collapsed', // shared across users
 };
@@ -218,6 +219,10 @@ export function updateNote(id, data) {
 export function deleteNote(id) {
   saveNotes(getNotes().filter(n => n.id !== id));
 }
+
+// ── Exam Date ──
+export function getExamDate() { return get(KEYS.EXAM_DATE, null); }
+export function saveExamDate(dateStr) { set(KEYS.EXAM_DATE, dateStr); }
 
 // ── Resources ──
 export function getResources() { return get(KEYS.RESOURCES, []); }

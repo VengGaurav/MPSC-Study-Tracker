@@ -25,8 +25,8 @@ export function ToastProvider({ children }) {
     }, [removeToast]);
 
     const toast = {
-        success: (msg) => { window.alert(msg); addToast(msg, 'success'); },
-        error: (msg) => { window.alert(msg); addToast(msg, 'error'); },
+        success: (msg) => addToast(msg, 'success'),
+        error: (msg) => addToast(msg, 'error'),
         info: (msg) => addToast(msg, 'info'),
         warn: (msg) => addToast(msg, 'warn'),
     };

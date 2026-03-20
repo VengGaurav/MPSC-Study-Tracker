@@ -10,6 +10,7 @@ export function AppDataProvider({ children }) {
     const [habits, setHabits] = useState([]);
     const [notes, setNotes] = useState([]);
     const [resources, setResources] = useState([]);
+    const [examDate, setExamDateState] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const reload = useCallback(() => {
@@ -19,8 +20,14 @@ export function AppDataProvider({ children }) {
         setHabits(storage.getHabits());
         setNotes(storage.getNotes());
         setResources(storage.getResources());
+        setExamDateState(storage.getExamDate());
         setLoading(false);
     }, []);
+
+    const setExamDate = useCallback((dateStr) => {
+        storage.saveExamDate(dateStr);
+        reload();
+    }, [reload]);
 
     useEffect(() => { reload(); }, [reload]);
 
@@ -140,6 +147,7 @@ export function AppDataProvider({ children }) {
             addHabit, toggleHabitDate, deleteHabit,
             addNote, updateNote, deleteNote,
             addResource, deleteResource,
+            examDate, setExamDate,
             todayMinutes, reload,
         }}>
             {children}

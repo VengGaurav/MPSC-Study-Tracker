@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAppData } from '../context/AppDataContext';
@@ -30,8 +30,9 @@ function getGreeting() {
 
 export default function DashboardPage() {
     const { user } = useAuth();
-    const { subjects, sessions, habits, schedule, loading, todayMinutes } = useAppData();
+    const { subjects, sessions, habits, schedule, loading, todayMinutes, examDate, setExamDate } = useAppData();
     const navigate = useNavigate();
+    const [isEditingExam, setIsEditingExam] = useState(false);
 
     const greeting = getGreeting();
     const quote = QUOTES[new Date().getDate() % QUOTES.length];
@@ -114,7 +115,52 @@ export default function DashboardPage() {
                         </p>
                     </div>
                 </div>
-                <div className="dash-quick-actions">
+                <div className="dash-quick-actions" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    
+                    {/* Exam Date Widget */}
+                    <div className="dash-exam-widget" style={{ 
+                        background: 'var(--surface-variant)', 
+                        padding: '8px 16px', 
+                        borderRadius: 'var(--radius-xl)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        border: '1px solid var(--border)'
+                    }}>
+                        <div style={{ fontSize: '20px' }}>🎯</div>
+                        {isEditingExam ? (
+                            <input type="date" autoFocus 
+                                min={new Date().toISOString().split('T')[0]}
+                                onChange={(e) => {
+                                    setExamDate(e.target.value);
+                                    setIsEditingExam(false);
+                                }}
+                                onBlur={() => setIsEditingExam(false)}
+                                style={{ padding: '6px 12px', borderRadius: 'var(--radius-sm)', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)', outline: 'none' }}
+                            />
+                        ) : examDate ? (() => {
+                            const diffDays = Math.ceil((new Date(examDate) - new Date()) / (1000 * 60 * 60 * 24));
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                                    <div style={{ fontSize: '11px', color: 'var(--text2)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Exam</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span style={{ fontWeight: 700, fontSize: '15px', color: diffDays < 30 ? 'var(--danger)' : 'var(--accent)' }}>
+                                            {diffDays > 0 ? `${diffDays} Days Left` : diffDays === 0 ? "It's Today! Good Luck!" : "Exam Passed"}
+                                        </span>
+                                        <button onClick={() => setIsEditingExam(true)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', padding: '2px', fontSize: '12px' }} title="Change Date">✏️</button>
+                                    </div>
+                                </div>
+                            );
+                        })() : (
+                            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text)' }}>No Exam Set</div>
+                                <button onClick={() => setIsEditingExam(true)} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 0, fontSize: '12px', fontWeight: 500, textAlign: 'left' }}>
+                                    + Add Target Date
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
                     <button className="dash-action-btn" onClick={() => navigate('/timer')}>
                         <span>▶️</span> Start Timer
                     </button>

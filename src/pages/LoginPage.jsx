@@ -41,10 +41,10 @@ export default function LoginPage() {
         try {
             if (tab === 'login') {
                 await login(email, password);
-                window.alert('✅ Login Successful! Welcome back.');
+                toast.success('✅ Login Successful! Welcome back.');
             } else {
                 await register(email, password, name);
-                window.alert('✅ Account Created Successfully!');
+                toast.success('✅ Account Created Successfully!');
             }
             navigate('/dashboard');
         } catch (err) {
