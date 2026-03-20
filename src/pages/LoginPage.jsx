@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import FeatureGuide from '../components/common/FeatureGuide';
 
 export default function LoginPage() {
     const [tab, setTab] = useState('login');
@@ -82,8 +83,12 @@ export default function LoginPage() {
     // ── Forgot Password View ──
     if (forgotMode) {
         return (
-            <div className="login-page">
-                <div className="login-card">
+            <div className="login-layout">
+                <div className="login-showcase">
+                    <FeatureGuide />
+                </div>
+                <div className="login-form-container">
+                    <div className="login-card">
                     <div className="brand">📚 <span>Sadhana</span></div>
                     <h1>Forgot Password</h1>
                     <p className="login-subtitle">Enter your email and we'll send you a reset link</p>
@@ -125,13 +130,18 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
+            </div>
         );
     }
 
     // ── Main Login / Register View ──
     return (
-        <div className="login-page">
-            <div className="login-card">
+        <div className="login-layout">
+            <div className="login-showcase">
+                <FeatureGuide />
+            </div>
+            <div className="login-form-container">
+                <div className="login-card">
                 <div className="brand">📚 <span>Sadhana</span></div>
                 <h1>MPSC Study Tracker</h1>
                 <p className="login-subtitle">Track your preparation, build discipline</p>
@@ -204,6 +214,7 @@ export default function LoginPage() {
                     </button>
                 </form>
 
+            </div>
             </div>
         </div>
     );
