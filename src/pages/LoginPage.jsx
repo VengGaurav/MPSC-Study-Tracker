@@ -204,12 +204,6 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <div className="divider-text">or</div>
-
-                <button className="google-btn" type="button" onClick={handleGoogle}>
-                    <span style={{ fontSize: 18 }}>G</span>
-                    Continue with Google
-                </button>
             </div>
         </div>
     );
