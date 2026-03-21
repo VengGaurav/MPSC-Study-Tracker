@@ -329,42 +329,76 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   align-items: center;
   gap: 16px;
   margin-left: 16px;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: var(--radius-xl);
   background: var(--surface2);
   border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 14.5px;
-  font-weight: 600;
-  user-select: none;
   box-shadow: var(--elevation-1);
   transition: all 0.25s ease;
-  letter-spacing: 0.01em;
+  user-select: none;
 }
 
 .topbar-datetime:hover {
   background: var(--surface);
   border-color: var(--accent);
-  color: var(--accent);
   box-shadow: var(--elevation-2);
 }
 
-.datetime-item {
+.datetime-date {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
 }
 
-.datetime-icon {
-  font-size: 16px;
-  opacity: 1;
+.topbar-datetime:hover .datetime-date {
+  color: var(--text);
+}
+
+.datetime-date svg {
+  color: var(--text3);
+  transition: color 0.2s ease;
+}
+
+.topbar-datetime:hover .datetime-date svg {
+  color: var(--accent);
 }
 
 .datetime-divider {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  width: 2px;
+  height: 14px;
+  border-radius: 2px;
   background: var(--border);
+}
+
+.datetime-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+}
+
+.datetime-time svg {
+  color: var(--accent);
+}
+
+.time-digits {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.time-ampm {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-left: 2px;
 }
 
 .topbar-right {
@@ -1288,28 +1322,36 @@ tr:hover {
   transform: translateX(20px);
 }
 
-/* ---- Pomodoro Ring ---- */
+/* ---- Pomodoro Ring (Premium) ---- */
 .pomodoro-ring {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  width: calc(100% + 16px);
-  height: calc(100% + 16px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
 }
 
 .pomodoro-ring circle {
   fill: none;
-  stroke-width: 3;
+  stroke-width: 10;
   stroke-linecap: round;
 }
 
 .pomodoro-ring .ring-bg {
-  stroke: var(--surface2);
+  stroke: var(--surface3);
+  transition: stroke 0.3s ease;
+}
+
+.timer-display.running .pomodoro-ring .ring-bg {
+  stroke: rgba(240, 165, 0, 0.12);
 }
 
 .pomodoro-ring .ring-progress {
   stroke: var(--accent);
   transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 6px var(--accent-glow));
 }
 
 /* ---- Timer Goal Inputs ---- */
@@ -1473,26 +1515,43 @@ tr:hover {
 
   .topbar-datetime {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 2px;
-    padding: 0;
-    margin-left: 8px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    padding: 6px 10px;
+    margin-left: auto;
+    margin-right: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    box-shadow: var(--elevation-1);
+    border-radius: var(--radius-lg);
+  }
+
+  .datetime-date {
+    font-size: 10px;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .datetime-date svg, .datetime-time svg {
+    width: 10px;
+    height: 10px;
   }
 
   .datetime-divider {
     display: none;
   }
 
-  .datetime-icon {
-    display: none;
+  .datetime-time {
+    gap: 4px;
+    white-space: nowrap;
   }
 
-  .datetime-item {
-    font-size: 10px;
-    line-height: 1.1;
+  .time-digits {
+    font-size: 11px;
+  }
+
+  .time-ampm {
+    font-size: 9px;
   }
 
   .search-input-wrap {
@@ -2064,30 +2123,49 @@ tr:hover {
   color: var(--text2);
 }
 
-/* ---- Session Timer Display ---- */
+/* ---- Session Timer Display (Premium) ---- */
 .timer-display {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 240px;
-  height: 240px;
+  width: 280px;
+  height: 280px;
   margin: 0 auto;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 
+    0 16px 32px rgba(0, 0, 0, 0.15), 
+    inset 0 0 0 1px var(--border);
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.timer-display.running {
+  box-shadow: 
+    0 16px 32px rgba(0, 0, 0, 0.15), 
+    inset 0 0 0 2px var(--accent-glow);
+  background: var(--surface2);
 }
 
 .timer-time {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: 52px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
   color: var(--text);
-  letter-spacing: 2px;
+  letter-spacing: -1px;
+  z-index: 5;
+  margin-top: 6px;
 }
 
 .timer-label {
-  font-size: 14px;
-  color: var(--text2);
-  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+  z-index: 5;
 }
 
 .timer-controls {

@@ -122,7 +122,7 @@ export default function TimerPage() {
     // Pomodoro progress (resets every 25 min)
     const pomodoroSeconds = seconds % (POMODORO_MINUTES * 60);
     const pomodoroProgress = pomodoroSeconds / (POMODORO_MINUTES * 60);
-    const circumference = 2 * Math.PI * 110;
+    const circumference = 2 * Math.PI * 130;
     const strokeDashoffset = circumference * (1 - pomodoroProgress);
 
     // Goal progress
@@ -136,7 +136,7 @@ export default function TimerPage() {
 
             <div className="card" style={{ maxWidth: 500, margin: '0 auto', textAlign: 'center', padding: 40 }}>
                 {/* Subject selector */}
-                <div className="form-group" style={{ maxWidth: 300, margin: '0 auto 24px' }}>
+                <div className="form-group" style={{ maxWidth: 300, margin: '0 auto 36px' }}>
                     <select
                         value={selectedSubject}
                         onChange={e => setSelectedSubject(e.target.value)}
@@ -148,15 +148,15 @@ export default function TimerPage() {
                 </div>
 
                 {/* Timer Display with Pomodoro Ring */}
-                <div className="timer-display">
-                    <svg className="pomodoro-ring" viewBox="0 0 240 240">
-                        <circle className="ring-bg" cx="120" cy="120" r="110" />
+                <div className={`timer-display ${running ? 'running' : ''}`}>
+                    <svg className="pomodoro-ring" viewBox="0 0 280 280">
+                        <circle className="ring-bg" cx="140" cy="140" r="130" />
                         <circle
                             className="ring-progress"
-                            cx="120" cy="120" r="110"
+                            cx="140" cy="140" r="130"
                             strokeDasharray={circumference}
                             strokeDashoffset={strokeDashoffset}
-                            transform="rotate(-90 120 120)"
+                            transform="rotate(-90 140 140)"
                         />
                     </svg>
                     <span className="timer-time">{h}:{m}:{s}</span>
