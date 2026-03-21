@@ -138,6 +138,17 @@ export function AppDataProvider({ children }) {
         return conflicting;
     }, [schedule]);
 
+    // ── Demo Data ops ──
+    const loadDemoData = useCallback(() => {
+        storage.injectDemoData();
+        reload();
+    }, [reload]);
+
+    const clearDemoData = useCallback(() => {
+        storage.clearAllDemoData();
+        reload();
+    }, [reload]);
+
     return (
         <AppDataContext.Provider value={{
             subjects, sessions, schedule, habits, notes, resources, loading,
@@ -149,6 +160,7 @@ export function AppDataProvider({ children }) {
             addResource, deleteResource,
             examDate, setExamDate,
             todayMinutes, reload,
+            loadDemoData, clearDemoData,
         }}>
             {children}
         </AppDataContext.Provider>

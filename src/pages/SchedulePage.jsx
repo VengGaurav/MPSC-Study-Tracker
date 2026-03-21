@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useAppData } from '../context/AppDataContext';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
-import { seedDemoSchedule } from '../utils/storage';
 import EmptyState from '../components/common/EmptyState';
 
 const TABS = [
@@ -178,13 +177,6 @@ export default function SchedulePage() {
                     </p>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                    {schedule.length === 0 && (
-                        <button className="btn btn-ghost" onClick={() => {
-                            const count = seedDemoSchedule();
-                            if (count > 0) { reload(); toast.success(`📅 Loaded ${count} demo activities!`); }
-                            else toast.info('Schedule already has data');
-                        }}>📋 Load Demo Routine</button>
-                    )}
                     <button className="btn btn-primary" onClick={openAdd}>+ Add Activity</button>
                 </div>
             </div>

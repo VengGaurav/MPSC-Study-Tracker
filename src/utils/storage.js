@@ -276,4 +276,112 @@ export function getStudyMinutesByDate() {
   return map;
 }
 
+// ── Demo Data Operations ──
+export function clearAllDemoData() {
+  localStorage.removeItem(KEYS.SUBJECTS);
+  localStorage.removeItem(KEYS.SESSIONS);
+  localStorage.removeItem(KEYS.SCHEDULE);
+  localStorage.removeItem(KEYS.HABITS);
+  localStorage.removeItem(KEYS.NOTES);
+  localStorage.removeItem(KEYS.RESOURCES);
+  localStorage.removeItem(KEYS.EXAM_DATE);
+}
+
+export function injectDemoData() {
+  clearAllDemoData();
+
+  const subjects = [
+    { id: uid(), createdAt: new Date().toISOString(), name: 'History', category: 'GS1', color: '#ffb74d', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Geography', category: 'GS1', color: '#4dd0e1', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Polity', category: 'GS2', color: '#81c784', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Economics', category: 'GS3', color: '#ffd54f', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Science & Tech', category: 'GS3', color: '#ba68c8', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Current Affairs', category: 'General', color: '#f06292', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'CSAT', category: 'Aptitude', color: '#a1887f', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Ethics', category: 'GS4', color: '#90a4ae', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Marathi Grammar', category: 'Language', color: '#4db6ac', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'English Grammar', category: 'Language', color: '#e57373', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'Agriculture', category: 'GS1', color: '#dce775', totalMinutes: 0 },
+    { id: uid(), createdAt: new Date().toISOString(), name: 'HRD & HR', category: 'GS3', color: '#7986cb', totalMinutes: 0 },
+  ];
+
+  const sessions = [];
+  const now = new Date();
+  subjects.forEach(sub => {
+    // Generate many sessions to populate graphs properly
+    const count = Math.floor(Math.random() * 8) + 5; // 5 to 12 sessions per subject
+    for (let i = 0; i < count; i++) {
+        const d = new Date(now);
+        // spread heavily over the last 30 days
+        d.setDate(d.getDate() - Math.floor(Math.random() * 30));
+        const dateStr = d.toISOString().split('T')[0];
+        const minutes = Math.floor(Math.random() * 120) + 15; // 15 to 135 mins
+        sessions.push({
+            id: uid(),
+            createdAt: d.toISOString(),
+            date: dateStr,
+            subjectId: sub.id,
+            minutes,
+            note: 'Studied chapter ' + (i + 1) + ' and revised notes.'
+        });
+        sub.totalMinutes += minutes;
+    }
+  });
+
+  saveSubjects(subjects);
+  saveSessions(sessions);
+
+  seedDemoSchedule();
+
+  const habits = [
+    { id: uid(), title: 'Read Newspaper', icon: '📰', frequency: 'daily', timeOfDay: 'morning', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Meditation', icon: '🧘', frequency: 'daily', timeOfDay: 'morning', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Answer Writing Practice', icon: '✍️', frequency: 'daily', timeOfDay: 'evening', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Exercise / Walk', icon: '🏃', frequency: 'daily', timeOfDay: 'afternoon', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Revise Flashcards', icon: '🃏', frequency: 'weekly', timeOfDay: 'any', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Mock Test', icon: '📝', frequency: 'weekly', timeOfDay: 'morning', completedDates: [], streak: 0, createdAt: new Date().toISOString() },
+  ];
+
+  habits.forEach(h => {
+    const isDaily = h.frequency === 'daily';
+    const count = isDaily ? Math.floor(Math.random() * 8) + 7 : Math.floor(Math.random() * 3) + 2;
+    h.streak = count;
+    for(let i=0; i<count; i++) {
+       const d = new Date(now);
+       const daysPassed = isDaily ? i : i * 4; 
+       d.setDate(d.getDate() - daysPassed - (Math.floor(Math.random() * 2)));
+       h.completedDates.push(d.toISOString().split('T')[0]);
+    }
+  });
+  saveHabits(habits);
+
+  const notes = [
+    { id: uid(), title: 'MPSC 2026 Strategy', content: 'Focus on mains answer writing. Revise polity daily. Consistency is key.', color: 'var(--surface-variant)', tags: ['Strategy'], isPinned: true, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Important Articles (Polity)', content: 'Article 14-18: Right to Equality\nArticle 19-22: Right to Freedom\nArticle 21A: Right to Education\nArticle 32: Constitutional Remedies', color: '#ffb74d33', tags: ['Polity', 'Revision'], isPinned: true, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Geography Map Pointers', content: 'Rivers of Maharashtra: Godavari, Krishna, Tapi, Narmada. Check tributaries and dams.', color: '#4dd0e133', tags: ['Geography'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Modern History Timeline', content: '1857 Revolt -> 1885 INC Formation -> 1905 Partition of Bengal -> 1920 Non-Cooperation -> 1942 Quit India', color: '#ba68c833', tags: ['History'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Economy Concepts', content: 'Repo Rate, Reverse Repo Rate, CRR, SLR. Understand inflation targeting by RBI.', color: '#ffd54f33', tags: ['Economics'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Science - Diseases', content: 'Bacterial vs Viral diseases. Focus on endemic diseases in Maharashtra. Recent outbreaks.', color: '#81c78433', tags: ['Science'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Essay Topics', content: '1. AI in Education\n2. Women Empowerment in Rural India\n3. Climate Change and Agriculture', color: 'var(--surface-variant)', tags: ['Essay'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Pending Tasks', content: '- Buy new notebook for CSAT\n- Download last 5 years question papers\n- Renew library membership', color: '#f0629233', tags: ['To-Do'], isPinned: true, createdAt: new Date().toISOString() },
+  ];
+  saveNotes(notes);
+
+  const resources = [
+    { id: uid(), title: 'MPSC Official Syllabus PDF', url: 'https://mpsc.gov.in', type: 'pdf', category: 'Official', tags: ['Syllabus', 'Essential'], isPinned: true, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Laxmikanth Polity Highlighted', url: '#', type: 'pdf', category: 'Study Material', tags: ['Polity'], isPinned: true, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Daily Current Affairs Video', url: 'https://youtube.com', type: 'video', category: 'Current Affairs', tags: ['Daily', 'CA'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Maharashtra State Board Books', url: 'http://cart.ebalbharati.in/', type: 'link', category: 'Reference', tags: ['State Board'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Previous Year Questions (PYQ) App', url: '#', type: 'link', category: 'Practice', tags: ['PYQ', 'App'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Spectrum Modern History Audio', url: '#', type: 'audio', category: 'Study Material', tags: ['History', 'Audiobook'], isPinned: true, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Ethics Case Studies Compilation', url: '#', type: 'doc', category: 'Study Material', tags: ['Ethics', 'GS4'], isPinned: false, createdAt: new Date().toISOString() },
+    { id: uid(), title: 'Economic Survey Highlights', url: '#', type: 'doc', category: 'Current Affairs', tags: ['Economics', 'Survey'], isPinned: false, createdAt: new Date().toISOString() },
+  ];
+  saveResources(resources);
+
+  const examD = new Date(now);
+  examD.setDate(examD.getDate() + 75);
+  saveExamDate(examD.toISOString().split('T')[0]);
+}
+
 export { KEYS };

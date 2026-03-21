@@ -25,6 +25,7 @@ import ProgressPage from './pages/ProgressPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProfilePage from './pages/ProfilePage';
 
 import { getSidebarCollapsed } from './utils/storage';
 
@@ -110,7 +111,7 @@ function AppLayout() {
                     <Route path="/notes" element={<NotesPage />} />
                     <Route path="/resources" element={<ResourcesPage />} />
                     <Route path="/progress" element={<ProgressPage />} />
-                    <Route path="/profile" element={<DashboardPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </div>
